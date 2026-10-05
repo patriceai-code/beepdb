@@ -1,0 +1,96 @@
+{
+  "dataset_name": "beepdb Calibration & ESC-50 Domestic Specificity Corpus",
+  "license_policy": "CC0 1.0 Public Domain and CC-BY 4.0 only (zero NC/SA copyleft)",
+  "calibrated_smoke_piezos": [
+    {
+      "filename": "real_smoke_detector_chirp_819808.wav",
+      "description": "Physical Smoke Detector Piezo Chirp #1 (Trouble / Low Battery)",
+      "source_url": "https://freesound.org/people/Bloofrzo/sounds/819808/",
+      "author": "Bloofrzo",
+      "license": "CC0 1.0",
+      "measured_peak_freq_hz": 3368.1,
+      "measured_duration_ms": 101.5,
+      "nominal_spec_freq_hz": 3200.0,
+      "calibration_role": "Used to calibrate +/-350 Hz tolerance window for Kidde / First Alert 3.2 kHz piezos (1.0s clip; cadence interval supplied by user)."
+    },
+    {
+      "filename": "real_smoke_detector_chirp_819807.wav",
+      "description": "Physical Smoke Detector Piezo Chirp #2 (End-of-Life / Trouble)",
+      "source_url": "https://freesound.org/people/Bloofrzo/sounds/819807/",
+      "author": "Bloofrzo",
+      "license": "CC0 1.0",
+      "measured_peak_freq_hz": 3122.3,
+      "measured_duration_ms": 17.0,
+      "nominal_spec_freq_hz": 3321.0,
+      "calibration_role": "Used to calibrate +/-350 Hz tolerance window for X-Sense / Kidde piezo resonance drift (1.0s clip; cadence interval supplied by user)."
+    }
+  ],
+  "hardware_tone_dsp_checks": [
+    {
+      "filename": "real_hardware_post_beep_cc0.wav",
+      "description": "NEC PC-9801VX Hardware POST Beep",
+      "source_url": "https://commons.wikimedia.org/wiki/File:NEC_PC-9801VX_ITF_beep_sound.ogg",
+      "license": "CC0 1.0",
+      "expected_freq_range_hz": [1900.0, 2100.0]
+    },
+    {
+      "filename": "real_microwave_beep_144227.wav",
+      "description": "Appliance Microwave Button Beep",
+      "source_url": "https://freesound.org/people/DWOBoyle/sounds/144227/",
+      "author": "DWOBoyle",
+      "license": "CC-BY 4.0",
+      "expected_freq_range_hz": [1950.0, 2200.0]
+    },
+    {
+      "filename": "real_buzzer.wav",
+      "description": "Electromechanical Warning Buzzer",
+      "source_url": "https://commons.wikimedia.org/wiki/File:Buzzer.wav",
+      "license": "CC0 1.0",
+      "expected_freq_range_hz": [2300.0, 2650.0]
+    }
+  ],
+  "esc50_domestic_non_alarm_clips": [
+    {
+      "filename": "esc50_washing_machine_21896.wav",
+      "esc50_id": "1-21896-A-35.wav",
+      "category": "washing_machine",
+      "citation": "K. J. Piczak, ESC: Dataset for Environmental Sound Classification, ACM Multimedia 2015",
+      "license": "CC-BY 3.0 / 4.0"
+    },
+    {
+      "filename": "esc50_vacuum_cleaner_100210.wav",
+      "esc50_id": "1-100210-A-36.wav",
+      "category": "vacuum_cleaner",
+      "citation": "K. J. Piczak, ESC: Dataset for Environmental Sound Classification, ACM Multimedia 2015",
+      "license": "CC-BY 3.0 / 4.0"
+    },
+    {
+      "filename": "esc50_pouring_water_118559.wav",
+      "esc50_id": "1-118559-A-17.wav",
+      "category": "pouring_water",
+      "citation": "K. J. Piczak, ESC: Dataset for Environmental Sound Classification, ACM Multimedia 2015",
+      "license": "CC-BY 3.0 / 4.0"
+    },
+    {
+      "filename": "esc50_door_knock_101336.wav",
+      "esc50_id": "1-101336-A-30.wav",
+      "category": "door_wood_knock",
+      "citation": "K. J. Piczak, ESC: Dataset for Environmental Sound Classification, ACM Multimedia 2015",
+      "license": "CC-BY 3.0 / 4.0"
+    },
+    {
+      "filename": "esc50_footsteps_155858.wav",
+      "esc50_id": "1-155858-A-25.wav",
+      "category": "footsteps",
+      "citation": "K. J. Piczak, ESC: Dataset for Environmental Sound Classification, ACM Multimedia 2015",
+      "license": "CC-BY 3.0 / 4.0"
+    },
+    {
+      "filename": "esc50_clock_tick_21934.wav",
+      "esc50_id": "1-21934-A-38.wav",
+      "category": "clock_tick",
+      "citation": "K. J. Piczak, ESC: Dataset for Environmental Sound Classification, ACM Multimedia 2015",
+      "license": "CC-BY 3.0 / 4.0"
+    }
+  ]
+}
