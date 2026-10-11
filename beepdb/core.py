@@ -1,6 +1,7 @@
 """
 beepdb Core Engine
-Lookup, filtering, and acoustic signature matching for hardware beep codes.
+Lookup, filtering, conversational description matching, and acoustic signature
+matching for hardware diagnostic beep codes.
 """
 
 from dataclasses import dataclass
@@ -93,6 +94,7 @@ def match_beep(
     """
     Finds the closest matching hardware device for an observed acoustic chirp.
     Prioritizes digital cadence intervals and scales frequency by component tolerance.
+    Returns None if composite confidence falls below 0.35.
     """
     db = load_database()
     if not db:
@@ -132,8 +134,50 @@ def match_beep(
             best_score = composite
             best_match = sig
 
-    if best_match:
+    if best_match and best_score >= 0.35:
         res = best_match.to_dict()
         res["confidence"] = round(min(best_score, 0.99), 2)
+        return res
+    return None
+
+
+def match_description(
+    interval_s: float,
+    brand: Optional[str] = None,
+    device_hint: Optional[str] = None,
+    pitch: str = "high"
+) -> Optional[Dict[str, Any]]:
+    """
+    Matches a user's spoken description of a beep (cadence interval, optional brand,
+    and device/pitch hints) against beepdb without requiring raw audio capture.
+    """
+    estimated_freq = 3200.0 if pitch.lower() in ("high", "piercing", "shrill") else 2000.0
+    candidates = load_database()
+    if brand:
+        brand_filtered = [s for s in candidates if brand.lower() in s.brand.lower()]
+        if brand_filtered:
+            candidates = brand_filtered
+    if device_hint:
+        hint_filtered = [s for s in candidates if device_hint.lower() in s.device_class.lower()]
+        if hint_filtered:
+            candidates = hint_filtered
+
+    best_sig = None
+    best_score = -1.0
+    for sig in candidates:
+        interval_diff = abs(interval_s - sig.signature_interval_s)
+        score_interval = max(0.0, 1.0 - (interval_diff / max(sig.signature_interval_s * 0.25, 5.0)))
+        freq_diff = abs(estimated_freq - sig.peak_freq_hz)
+        score_freq = max(0.0, 1.0 - (freq_diff / 1200.0))
+        brand_bonus = 0.20 if (brand and brand.lower() in sig.brand.lower()) else 0.0
+        severity_tiebreak = 0.02 if sig.severity == "critical" else 0.0
+        score = (score_interval * 0.75) + (score_freq * 0.25) + brand_bonus + severity_tiebreak
+        if score > best_score:
+            best_score = score
+            best_sig = sig
+
+    if best_sig:
+        res = best_sig.to_dict()
+        res["confidence"] = round(min(best_score, 0.96), 2)
         return res
     return None
