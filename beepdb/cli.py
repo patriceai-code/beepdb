@@ -5,8 +5,9 @@ Query hardware acoustic signatures directly from your terminal.
 
 import argparse
 import json
+import os
 import sys
-from .core import match_beep, search_signatures, load_database
+from .core import match_beep, match_description, search_signatures
 
 
 def main():
@@ -30,6 +31,18 @@ def main():
     # Match command (alias for lookup)
     match_parser = subparsers.add_parser("match", help="Identify device by chirp interval & frequency (alias for lookup)")
     add_match_args(match_parser)
+
+    # Describe command (voice-native spoken description matching)
+    desc_parser = subparsers.add_parser("describe", help="Match spoken description (interval, brand, pitch) without audio")
+    desc_parser.add_argument("--interval", "-i", type=float, required=True, help="Chirp interval in seconds (e.g. 30)")
+    desc_parser.add_argument("--brand", "-b", type=str, help="Optional manufacturer brand (e.g. Kidde)")
+    desc_parser.add_argument("--hint", type=str, help="Optional device class hint (e.g. co_detector)")
+    desc_parser.add_argument("--pitch", "-p", type=str, default="high", help="Perceived pitch: high or low")
+    desc_parser.add_argument("--json", action="store_true", help="Output in raw JSON format")
+
+    # Corpus command
+    corpus_parser = subparsers.add_parser("corpus", help="List bundled CC0/CC-BY physical & ESC-50 reference audio clips")
+    corpus_parser.add_argument("--json", action="store_true", help="Output manifest in raw JSON format")
 
     # List command
     list_parser = subparsers.add_parser("list", help="List and search verified hardware beep signatures")
@@ -58,6 +71,40 @@ def main():
             print(f"  Confidence: {int(match['confidence'] * 100)}%")
             print(f"  Action:     {match['action']}")
             print(f"  Source:     {match['source_url']}\n")
+
+    elif args.command == "describe":
+        match = match_description(
+            interval_s=args.interval,
+            brand=args.brand,
+            device_hint=args.hint,
+            pitch=args.pitch,
+        )
+        if not match:
+            print("No matching hardware signature found in beepdb.", file=sys.stderr)
+            sys.exit(1)
+        if args.json:
+            print(json.dumps(match, indent=2))
+        else:
+            print("\n[DESCRIBE] beepdb Conversational Match Result:")
+            print(f"  Device:     {match['brand']} {match['device_class'].replace('_', ' ').title()}")
+            print(f"  Meaning:    {match['meaning'].replace('_', ' ').title()} ({match['severity'].upper()})")
+            print(f"  Confidence: {int(match['confidence'] * 100)}%")
+            print(f"  Action:     {match['action']}\n")
+
+    elif args.command == "corpus":
+        manifest_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "corpus", "manifest.json")
+        if not os.path.exists(manifest_path):
+            print("Corpus manifest not found.", file=sys.stderr)
+            sys.exit(1)
+        with open(manifest_path, "r", encoding="utf-8") as f:
+            manifest = json.load(f)
+        if args.json:
+            print(json.dumps(manifest, indent=2))
+        else:
+            print(f"\n{manifest['dataset_name']} ({manifest['license_policy']}):")
+            print(f"  Calibrated Smoke Piezos: {len(manifest['calibrated_smoke_piezos'])} clips")
+            print(f"  Hardware Tone DSP Clips: {len(manifest['hardware_tone_dsp_checks'])} clips")
+            print(f"  ESC-50 Domestic Clips:   {len(manifest['esc50_domestic_non_alarm_clips'])} clips\n")
 
     elif args.command == "list":
         results = search_signatures(brand=args.brand, device_class=args.device_class, meaning=args.meaning)
