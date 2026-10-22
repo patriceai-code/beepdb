@@ -92,7 +92,10 @@ def main():
             print(f"  Action:     {match['action']}\n")
 
     elif args.command == "corpus":
-        manifest_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "corpus", "manifest.json")
+        manifest_path = os.path.join(os.path.dirname(__file__), "corpus", "manifest.json")
+        if not os.path.exists(manifest_path):
+            # Fallback if running from repository root where corpus might sit alongside beepdb
+            manifest_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "corpus", "manifest.json")
         if not os.path.exists(manifest_path):
             print("Corpus manifest not found.", file=sys.stderr)
             sys.exit(1)

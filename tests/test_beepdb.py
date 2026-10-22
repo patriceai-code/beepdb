@@ -7,7 +7,10 @@ import pytest
 from beepdb import load_database, search_signatures, match_beep, match_description
 
 REPO_ROOT = os.path.dirname(os.path.dirname(__file__))
-CORPUS_DIR = os.path.join(REPO_ROOT, "corpus")
+# Check package-bundled corpus first, then root corpus fallback
+CORPUS_DIR = os.path.join(REPO_ROOT, "beepdb", "corpus")
+if not os.path.exists(CORPUS_DIR):
+    CORPUS_DIR = os.path.join(REPO_ROOT, "corpus")
 MANIFEST_PATH = os.path.join(CORPUS_DIR, "manifest.json")
 
 
